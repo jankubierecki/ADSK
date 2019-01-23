@@ -1,0 +1,61 @@
+---
+
+- name: install jre
+  yum:
+    name: java-1.8.0-openjdk-headless.x86_64
+    state: present
+
+- name: create group
+  group:
+    name: "{{ application_group }}"
+    state: present
+    system: yes
+
+- name: create user
+  user:
+    name: "{{ application_user }}"
+    state: present
+    system: yes
+
+- name: add user to group
+  user:
+    name: "{{ application_user }}"
+    shell: /sbin/nologin
+    group: "{{ application_group }}"
+    append: yes
+
+- name: create app dir
+  file: 
+    path: /opt/{{ application_user }}/springApp/
+    state: directory
+
+- name: give user privileges
+  file:
+    path: /opt/{{ application_user }}/{{ application_name }}/
+    recurse: yes
+    owner: "{{ application_user }}"
+    group: "{{ application_group }}"
+
+- name: upload jar
+  copy:
+    src: roles/application/files/rentalapp-0.0.1-SNAPSHOT.jar
+    dest: /opt/{{ application_user }}/springApp/{{ application_name }}
+
+- name: create app.service
+  template:
+    src: application.service
+    dest: /etc/systemd/system/application.service
+
+- name: reload systemd configs
+  systemd:
+    daemon_reload: yes
+
+- name: add app.service
+  systemd:
+    name: application
+    enabled: yes
+
+- name: start app.service
+  service:
+    name: application
+    state: started

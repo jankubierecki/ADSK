@@ -1,0 +1,56 @@
+---
+
+- name: install grafana
+  yum:
+    name: "{{ grafana_src }}"
+    state: present
+
+- name: copy grafana conf
+  template:
+    src: grafana.ini
+    dest: /etc/grafana/grafana.ini
+
+- name: start grafana
+  service:
+    name: grafana-server
+    state: started
+
+- name: create dashboard dir
+  file:
+    path: /tmp/dashboards
+    state: directory
+
+- name: copy grafana dashboard 1
+  template:
+    src: roles/grafana/files/nginx_rev5.json
+    dest: /tmp/dashboards
+
+- name: add grafana source 
+  grafana_datasource:
+    name: "{{ grafana_datasource_name }}"
+    grafana_url: "http://127.0.0.1:8080"
+    grafana_user: "{{ grafana_user }}"
+    grafana_password: "{{ grafana_password }}"
+    ds_type: "influxdb"
+    url: "http://{{ metric_store_ip }}:8086"
+    database: "{{ telegraf_db_name }}"
+    is_default: yes
+  
+- name: restart grafana
+  service:
+    name: grafana-server
+    state: restarted
+
+- name: load grafana dashboard 
+  grafana_dashboard:
+    grafana_url: "http://127.0.0.1:8080"
+    grafana_user: "{{ grafana_user }}"
+    grafana_password: "{{ grafana_password }}"
+    state: present
+    overwrite: yes
+    path: /tmp/dashboards/nginx_rev5.json
+
+- name: restart grafana
+  service:
+    name: grafana-server
+    state: restarted

@@ -1,0 +1,16 @@
+---
+- name: install certbot
+  yum:
+    name: python2-certbot-nginx
+    state: present
+
+- name: kill certbot and letsencrypt instances
+  shell: find / -type f -name ".certbot.lock" -exec rm {} \;
+
+- name: configure certbot
+  shell: "certbot -i nginx -n -d '{{ server_domain_name }}' --nginx -m '{{ mail }}' --agree-tos --redirect"
+
+- name: restart nginx
+  service:
+    name: nginx
+    state: restarted

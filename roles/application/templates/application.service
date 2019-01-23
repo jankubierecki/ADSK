@@ -1,0 +1,13 @@
+[Unit]
+After=network-online.target
+
+[Service]
+Type=simple
+User={{ application_user }}
+WorkingDirectory=/opt/{{ application_user }}/springApp
+ExecStart=/usr/bin/java -jar /opt/{{ application_user }}/springApp/{{ application_name }}
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

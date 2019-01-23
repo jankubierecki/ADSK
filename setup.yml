@@ -1,0 +1,19 @@
+---
+    
+- hosts: proxy_server
+  become: yes
+  roles:
+    - nginx
+    - letsencrypt
+
+- hosts: application
+  become: yes
+  roles:
+    - application
+    - telegraf 
+
+- hosts: metrics_store
+  become: yes
+  roles:
+    - influx
+    - grafana
