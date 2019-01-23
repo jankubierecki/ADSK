@@ -1,6 +1,6 @@
-** This repo presents my final project for Computer Systems Administration classes 
+#ADSK
 
-### tools
+### tools:
 
 * ansible
 * nginx
@@ -10,7 +10,7 @@
 * letsencrypt
 * reversed proxy
 
-### how does it work
+### how does it work:
 
 ![alt text](https://i.imgur.com/82NV40x.png "Project structure")
 
@@ -24,7 +24,7 @@
 * place your *.jar file into `app/roles/files`
 * run `ansible-playbook --ask-vault-pass --extra-vars "app_name=[]" setup.yml`
 
-### note
+## note:
 
 * ansible vault and password will be shared soon
 * grafana credentials: **"admin:admin"**
